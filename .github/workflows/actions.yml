@@ -1,0 +1,50 @@
+name: Send Text Message with Bank Updates
+
+on: push
+  #schedule:
+  #  - cron: '6 9 * * *' # At 00:00 on Monday
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+
+      - name: checkout repo content
+        uses: actions/checkout@v3 # checkout the repository content to github runner
+
+      - name: setup python
+        uses: actions/setup-python@v3
+        with:
+          python-version: '3.9' # install the python version needed
+          
+      - name: install python packages
+        run: |
+          python -m pip install --upgrade pip
+          pip install twilio
+          pip install pandas
+          pip install cryptography
+          
+      - name: execute py script # run main.py
+        env:
+          account_sid      :   ${{ secrets.ACCOUNT_SID }}
+          auth_token       :   ${{ secrets.AUTH_TOKEN }}
+          twilio_number    :   ${{ secrets.TWILIO_NUMBER }}
+          target_number    :   ${{ secrets.TARGET_NUMBER }}
+          encryption_key :     ${{ secrets.encryption_key }}
+          weekly_update    :   ${{ vars.weekly_update }}
+          savings_goal     :   ${{ vars.savings_goal }}
+          savings_goal_str :   ${{ vars.savings_goal_str }}
+        run: python BankAuto.py
+          
+      - name: commit files
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add -A
+          git diff-index --quiet HEAD || (git commit -a -m "updated CSV and sent message" --allow-empty)
+          
+      - name: push changes
+        uses: ad-m/github-push-action@v0.6.0
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: main 
