@@ -1,8 +1,8 @@
 name: Send Text Message with Bank Updates
 
-on: push
-  #schedule:
-  #  - cron: '6 9 * * *' # At 00:00 on Monday
+on:
+  schedule:
+    - cron: '0 8 * * 5 # At 04:00 AM EST on Friday
 
 jobs:
   build:
