@@ -2,7 +2,7 @@ name: Send Text Message with Bank Updates
 
 on:
   schedule:
-    - cron: '0 8 * * 5 # At 04:00 AM EST on Friday
+    - cron: '0 8 * * 5' # At 04:00 AM EST on Friday
 
 jobs:
   build:
